@@ -10,23 +10,32 @@ int main (int argc, char *argv[])
     int processor_name_len;
     int c, aflag, bflag, cflag;
     aflag=bflag=cflag=0;
+    int tvalue;
     rank =1;
-    /* a: for requirment, b for interesting, c for optional */
-    while ((c = getopt (argc, argv, "abc")) != -1)
+    /* lvl 1: for requirment, 2 for interesting, 3 for optional */
+    while ((c = getopt (argc, argv, "l:")) != -1)
         switch (c)
         {
-            case 'a':
-                aflag = 1;
-                break;
-            case 'b':
-                bflag = 1;
-                break;
-            case 'c':
-                cflag = 1;
+            case 'l':
+                if(optarg) tvalue = atoi(optarg);
                 break;
             default:
                 break;
         }
+    switch(tvalue)
+    {
+        case 1:
+            aflag = 1;
+            break;
+        case 2:
+            aflag = bflag =1;
+            break;
+        case 3:
+            aflag = bflag =cflag =1;
+            break;
+        default:
+            break;
+    }
     MPI_Init(&argc, &argv);
     MPI_Barrier(MPI_COMM_WORLD);
 

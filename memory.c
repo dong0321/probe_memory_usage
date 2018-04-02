@@ -107,12 +107,12 @@ int get_memory_usage_kb(struct mem_info *meminfo)
         search_result = strstr(line, "voluntary_ctxt_switches:");
         if (search_result != NULL)
         {
-            sscanf(line, "%*s %ld", &meminfo->voluntary_ctxt_switches);
+            sscanf(line, "%*s %d", &meminfo->voluntary_ctxt_switches);
         }
         search_result = strstr(line, "nonvoluntary_ctxt_switches:");
         if (search_result != NULL)
         {
-            sscanf(line, "%*s %ld", &meminfo->nonvoluntary_ctxt_switches);
+            sscanf(line, "%*s %d", &meminfo->nonvoluntary_ctxt_switches);
         }
 
        search_result = strstr(line, "PPid:");
