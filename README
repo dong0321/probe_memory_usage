@@ -5,18 +5,20 @@ This code allow you to get memory usage of mpi process and the daemon.
     $ mpicc check_memory.c memory.c -o check_memory
 
 #Usage
-    $ mpirun -np 4 ./check_memory -a -b -c
+    $ mpirun -np 4 ./check_memory -1
 
-    -a -b -c allow to print different info from /proc/pid/status
-    enable -a (necessary)
+    There are 3 level of information you want to print,
+    -1 -2 -3 allow to print different level of infomation from /proc/pid/status
+
+    level 1 (necessary)
     long VmSize;
     long VmRss;
 
-    enable -b (improtant)
+    level 2 (important: ps level 1 is included)
     long VmPin;
     long RssShmem;
 
-    enable -c (optional)
+    level 3 (detailed: ps level 1 & 2 are included) 
     long VmData;
     long VmStk;
     long VmExe;
