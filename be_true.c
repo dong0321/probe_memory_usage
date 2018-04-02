@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "memory.h"
-
+#define K (1024)
 int main (int argc, char *argv[])
 {
     int c, aflag, bflag, cflag;
@@ -31,8 +31,20 @@ int main (int argc, char *argv[])
         default:
             break;
     }
+    sleep(3);
     get_memory_usage_kb(&meminfo);
     printf("Init: \n");
+    print_info(aflag, bflag, cflag);
+
+    char *p1;
+    p1=malloc(40*K);
+    sleep(3);
+    get_memory_usage_kb(&meminfo);
+    print_info(aflag, bflag, cflag);
+
+    free(p1);
+    sleep(3);
+    get_memory_usage_kb(&meminfo);
     print_info(aflag, bflag, cflag);
 
     return 0;

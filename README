@@ -1,10 +1,11 @@
 This code allow you to get memory usage of mpi process and the daemon.
 
 #Build
-
+    $ gcc be_true.c memory.c -o be_true
     $ mpicc check_memory.c memory.c -o check_memory
 
 #Usage
+    $ ./be_true -l 3
     $ mpirun -np 4 ./check_memory -l level_value
 
     There are 3 level of information you can print,
@@ -30,6 +31,4 @@ This code allow you to get memory usage of mpi process and the daemon.
     char Cpus_allowed_list[256];
     char Mems_allowed[256];
     char Mems_allowed_list[256];
-    long voluntary_ctxt_switches;
-    long nonvoluntary_ctxt_switches;
-
+# more info http://man7.org/linux/man-pages/man5/proc.5.html

@@ -9,6 +9,8 @@ struct mem_info
 
     long VmPin;
     long RssShmem;
+    long RssAnon;
+    long RssFile;
 
     long VmData;
     long VmStk;
@@ -21,8 +23,6 @@ struct mem_info
     char Cpus_allowed_list[256];
     char Mems_allowed[256];
     char Mems_allowed_list[256];
-    long voluntary_ctxt_switches;
-    long nonvoluntary_ctxt_switches;
 };
 
 struct mem_info meminfo;

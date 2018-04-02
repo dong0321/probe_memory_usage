@@ -11,7 +11,6 @@ int main (int argc, char *argv[])
     int c, aflag, bflag, cflag;
     aflag=bflag=cflag=0;
     int tvalue;
-    rank =1;
     /* lvl 1: for requirment, 2 for interesting, 3 for optional */
     while ((c = getopt (argc, argv, "l:")) != -1)
         switch (c)
@@ -40,17 +39,11 @@ int main (int argc, char *argv[])
     MPI_Barrier(MPI_COMM_WORLD);
 
     get_memory_usage_kb(&meminfo);
-    if(rank==0)
-    {
-        printf("Init: \n");
-        print_info(aflag, bflag, cflag);
-    }
+
     MPI_Comm_size(MPI_COMM_WORLD, &np);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Get_processor_name(processor_name, &processor_name_len);
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    get_memory_usage_kb(&meminfo);
     if(rank==0)
     {
         printf("\nNprocs=%03d, My_rank=%03d, processor_name=%5s\n",

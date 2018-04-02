@@ -48,6 +48,16 @@ int get_memory_usage_kb(struct mem_info *meminfo)
         {
             sscanf(line, "%*s %ld", &meminfo->RssShmem);
         }
+        search_result = strstr(line, "RssAnon:");
+        if (search_result != NULL)
+        {
+            sscanf(line, "%*s %ld", &meminfo->RssAnon);
+        }
+        search_result = strstr(line, "RssFile:");
+        if (search_result != NULL)
+        {
+            sscanf(line, "%*s %ld", &meminfo->RssFile);
+        }
 
         search_result = strstr(line, "VmData:");
         if (search_result != NULL)
@@ -104,16 +114,6 @@ int get_memory_usage_kb(struct mem_info *meminfo)
         {
             sscanf(line, "%*s %s", meminfo->Mems_allowed_list);
         }
-        search_result = strstr(line, "voluntary_ctxt_switches:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %d", &meminfo->voluntary_ctxt_switches);
-        }
-        search_result = strstr(line, "nonvoluntary_ctxt_switches:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %d", &meminfo->nonvoluntary_ctxt_switches);
-        }
 
        search_result = strstr(line, "PPid:");
        if (search_result != NULL)
@@ -168,7 +168,7 @@ void print_info(int aflag, int bflag, int cflag)
 
     if(bflag)
     {
-        printf("    VmPin: %6ld KB, RssShmem: %6ld KB\n", meminfo.VmPin, meminfo.RssShmem);
+        printf("    VmPin: %6ld KB, RssAnon: %6ld KB, RssFile: %6ld KB, RssShmem: %6ld KB\n", meminfo.VmPin, meminfo.RssAnon, meminfo.RssFile, meminfo.RssShmem);
     }
 
     if(cflag)
@@ -176,8 +176,8 @@ void print_info(int aflag, int bflag, int cflag)
         printf("    VmData: %6ld KB, VmStk: %6ld KB, VmExe: %6ld KB, VmLib: %6ld KB, VmPTE: %6ld KB, VmPMD: %6ld KB, VmSwap: %6ld KB\n",
                 meminfo.VmData, meminfo.VmStk, meminfo.VmExe, meminfo.VmLib, meminfo.VmPTE, meminfo.VmPMD, meminfo.VmSwap);
 
-        printf("    Cpus_allowed: %s, Cpus_allowed_list: %s, Mems_allowed: %s, Mems_allowed_list: %s, voluntary_ctxt_switchs: %6ld, nonvoluntary_ctxt_switchs: %6ld\n",
-                meminfo.Cpus_allowed, meminfo.Cpus_allowed_list, meminfo.Mems_allowed, meminfo.Mems_allowed_list,
-                meminfo.voluntary_ctxt_switches, meminfo.nonvoluntary_ctxt_switches);
+        printf("    Cpus_allowed: %s, Cpus_allowed_list: %s, Mems_allowed: %s, Mems_allowed_list: %s\n",
+                meminfo.Cpus_allowed, meminfo.Cpus_allowed_list, meminfo.Mems_allowed, meminfo.Mems_allowed_list);
     }
+    printf("\n");
 }
