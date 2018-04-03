@@ -15,7 +15,7 @@
 #include "memory.h"
 
 /* parent pid */
-long ppid, Ppid;
+int ppid, Ppid;
 
 /* sum of RSS/PSS from /proc/pid/smaps */
 int RssSum, PssSum, pRssSum, pPssSum;
@@ -31,7 +31,7 @@ int get_memory_usage_kb(struct mem_info *meminfo)
 
     long to_read = 8192;
     char buffer[to_read];
-    int read = fread(buffer, sizeof(char), to_read, procfile);
+    fread(buffer, sizeof(char), to_read, procfile);
     fclose(procfile);
 
     char* search_result;
@@ -153,7 +153,7 @@ void parent_info()
 
     snprintf(pfilename, sizeof pfilename, "/proc/%d/status", ppid);
     FILE* pfile = fopen(pfilename, "r");
-    int prt_read = fread(prt_buffer, sizeof(char), prt_to_read, pfile);
+    fread(prt_buffer, sizeof(char), prt_to_read, pfile);
     fclose(pfile);
 
     char* pline = strtok(prt_buffer, delims);
@@ -201,7 +201,7 @@ void smap_pss_rss(int pid)
         search_result = strstr(line, "Rss:");
         if (search_result != NULL)
         {
-            sscanf(line, "%*s %ld", &Rss);
+            sscanf(line, "%*s %d", &Rss);
             if( pid==0 )
             {
                 RssSum = RssSum + Rss;
@@ -214,7 +214,7 @@ void smap_pss_rss(int pid)
         search_result = strstr(line, "Pss:");
         if (search_result != NULL)
         {
-            sscanf(line, "%*s %ld", &Pss);
+            sscanf(line, "%*s %d", &Pss);
             if( pid==0 )
             {
                 PssSum = PssSum + Pss;
@@ -231,8 +231,8 @@ void print_info(int aflag, int bflag, int cflag)
 {
     if(aflag)
     {
-        printf("    VmRSS(status): %6ld KB, VmSize: %6ld KB, Rss(smaps): %6ld KB, Pss: %6ld KB\n", meminfo.VmRss, meminfo.VmSize, RssSum, PssSum);
-        printf("    My_parent_id: %d, pVmRSS(status): %6ld KB, pVmSize: %6ld KB, pRss(smaps): %6ld KB, pPss: %6ld KB\n", Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
+        printf("    VmRSS(status): %6ld KB, VmSize: %6ld KB, Rss(smaps): %6d KB, Pss: %6d KB\n", meminfo.VmRss, meminfo.VmSize, RssSum, PssSum);
+        printf("    My_parent_id: %d, pVmRSS(status): %6ld KB, pVmSize: %6ld KB, pRss(smaps): %6d KB, pPss: %6d KB\n", Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
     }
 
     if(bflag)

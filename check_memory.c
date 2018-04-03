@@ -21,7 +21,7 @@ int main (int argc, char *argv[])
     int processor_name_len;
     int c, aflag, bflag, cflag;
     aflag=bflag=cflag=0;
-    int tvalue;
+    int tvalue =0;
     /* lvl 1: for requirment, 2 for interesting, 3 for optional */
     while ((c = getopt (argc, argv, "l:")) != -1)
         switch (c)
