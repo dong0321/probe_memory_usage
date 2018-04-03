@@ -30,3 +30,4 @@ struct mem_info meminfo;
 int get_memory_usage_kb(struct mem_info *meminfo);
 void print_info(int a, int b, int c);
 void parent_info();
+void smap_pss_rss(int pid);

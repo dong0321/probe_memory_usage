@@ -2,15 +2,16 @@
 #include <stdlib.h>
 #include "memory.h"
 
+/* parent pid */
 long ppid, Ppid;
+
+/* sum of RSS/PSS from /proc/pid/smaps */
+int RssSum, PssSum, pRssSum, pPssSum;
+
+/* parent Vmrss/vmsize */
 long pVmRSS, pVmSize;
-/*
- * * Look for lines in the procfile contents like:
- * * VmRSS:         5 kB
- * * VmSize:        4 kB
- * *
- * * Grab the number between the whitespace and the "kB"
- * */
+
+
 int get_memory_usage_kb(struct mem_info *meminfo)
 {
     /* Get the the current process' status file from the proc filesystem */
@@ -122,6 +123,8 @@ int get_memory_usage_kb(struct mem_info *meminfo)
        }
        line = strtok(NULL, delims);
     }
+    smap_pss_rss(0);
+    smap_pss_rss(ppid);
     parent_info();
     return 1;
 }
@@ -158,12 +161,66 @@ void parent_info()
     }
 }
 
+void smap_pss_rss(int pid)
+{
+    char pfilename[50];
+    FILE *procfile;
+
+    if( pid==0 )
+    {
+        procfile = fopen("/proc/self/smaps", "r");
+    }
+    else
+    {
+        snprintf(pfilename, sizeof pfilename, "/proc/%d/smaps", pid);
+        procfile = fopen(pfilename, "r");
+    }
+    long to_read = 500000;
+    char buffer[to_read];
+    int read = fread(buffer, sizeof(char), to_read, procfile);
+    fclose(procfile);
+    int Rss, Pss;
+    char* search_result;
+    /* Look through proc status contents line by line */
+    char delims[] = "\n";
+    char* line = strtok(buffer, delims);
+    while (line != NULL )
+    {
+        search_result = strstr(line, "Rss:");
+        if (search_result != NULL)
+        {
+            sscanf(line, "%*s %ld", &Rss);
+            if( pid==0 )
+            {
+                RssSum = RssSum + Rss;
+            }
+            else
+            {
+                pRssSum = pRssSum + Rss;
+            }
+        }
+        search_result = strstr(line, "Pss:");
+        if (search_result != NULL)
+        {
+            sscanf(line, "%*s %ld", &Pss);
+            if( pid==0 )
+            {
+                PssSum = PssSum + Pss;
+            }
+            else
+            {
+                pPssSum = pPssSum + Pss;
+            }
+        }
+        line = strtok(NULL, delims);
+    }
+}
 void print_info(int aflag, int bflag, int cflag)
 {
     if(aflag)
     {
-        printf("    VmRSS: %6ld KB, VmSize: %6ld KB\n", meminfo.VmRss, meminfo.VmSize);
-        printf("    My_parent_id is: %d, pVmRSS: %6ld KB, pVmSize: %6ld KB\n", Ppid, pVmRSS, pVmSize);
+        printf("    VmRSS(status): %6ld KB, VmSize: %6ld KB, Rss(smaps): %6ld KB, Pss: %6ld KB\n", meminfo.VmRss, meminfo.VmSize, RssSum, PssSum);
+        printf("    My_parent_id: %d, pVmRSS(status): %6ld KB, pVmSize: %6ld KB, pRss(smaps): %6ld KB, pPss: %6ld KB\n", Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
     }
 
     if(bflag)

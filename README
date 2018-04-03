@@ -1,5 +1,7 @@
 This code allow you to get memory usage of mpi process and the daemon.
 
+The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & Pss)
+
 #Build
     $ gcc be_true.c memory.c -o be_true
     $ mpicc check_memory.c memory.c -o check_memory
@@ -11,15 +13,18 @@ This code allow you to get memory usage of mpi process and the daemon.
     There are 3 level of information you can print,
     -l 1,2,3 allow to print different level of information from /proc/pid/status
 
-    level 1 (necessary)
+    level 1 (necessary: both mpi process and daemon)
     long VmSize;
     long VmRss;
+    int Pss;
 
-    level 2 (important: ps level 1 is included)
+    level 2 (important: ompi process only,  level 1 is included)
     long VmPin;
     long RssShmem;
+    long RssFile;
+    long RssAnon;
 
-    level 3 (detailed: ps level 1 & 2 are included)
+    level 3 (extention: ompi process only, level 1 & 2 are included)
     long VmData;
     long VmStk;
     long VmExe;
