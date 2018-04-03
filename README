@@ -1,5 +1,4 @@
 This code allow you to get memory usage of mpi process and the daemon.
-
 The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & Pss)
 
 #Build
@@ -37,3 +36,16 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     char Mems_allowed[256];
     char Mems_allowed_list[256];
 # more info http://man7.org/linux/man-pages/man5/proc.5.html
+#           https://en.wikipedia.org/wiki/Proportional_set_size
+
+PSS – This is the most valuable column. It adds together the unique memory (USS)
+and a proportion of shared memory derived by dividing total shared memory by the
+number of other processes sharing that memory. Thus it will give you an accurate
+representation of how much actual physical memory is being used per process, with
+shared memory truly represented as shared. Think of it as physical memory.
+
+RSS – Resident Set Size, which is the amount of shared memory plus unshared memory
+used by each process. If any processes share memory, this will overreport the amount
+of memory actually used, because the same shared memory will be counted more than once,
+appearing again in each other process that shares the same memory. Thus it is an unreliable
+number, especially when high-memory processes have a lot of forks.

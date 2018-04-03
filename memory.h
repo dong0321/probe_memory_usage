@@ -1,3 +1,14 @@
+/*
+ * Copyright (c)  2018       The University of Tennessee and The University
+ *                           of Tennessee Research Foundation.  All rights
+ *                            reserved.
+ *
+ * $COPYRIGHT$
+ *
+ * Additional copyrights may follow
+ *
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
