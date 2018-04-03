@@ -31,7 +31,11 @@ int get_memory_usage_kb(struct mem_info *meminfo)
 
     long to_read = 8192;
     char buffer[to_read];
-    fread(buffer, sizeof(char), to_read, procfile);
+    if( !fread(buffer, sizeof(char), to_read, procfile) )
+    {
+       printf("read error");
+       return -1;
+    }
     fclose(procfile);
 
     char* search_result;
@@ -131,7 +135,7 @@ int get_memory_usage_kb(struct mem_info *meminfo)
        search_result = strstr(line, "PPid:");
        if (search_result != NULL)
        {
-           sscanf(line, "%*s %ld", &ppid);
+           sscanf(line, "%*s %d", &ppid);
        }
        line = strtok(NULL, delims);
     }
@@ -153,7 +157,10 @@ void parent_info()
 
     snprintf(pfilename, sizeof pfilename, "/proc/%d/status", ppid);
     FILE* pfile = fopen(pfilename, "r");
-    fread(prt_buffer, sizeof(char), prt_to_read, pfile);
+    if( !fread(prt_buffer, sizeof(char), prt_to_read, pfile))
+    {
+        printf("read error");
+    }
     fclose(pfile);
 
     char* pline = strtok(prt_buffer, delims);
@@ -189,7 +196,10 @@ void smap_pss_rss(int pid)
     }
     long to_read = 500000;
     char buffer[to_read];
-    int read = fread(buffer, sizeof(char), to_read, procfile);
+    if( !fread(buffer, sizeof(char), to_read, procfile) )
+    {
+        printf("read error");
+    }
     fclose(procfile);
     int Rss, Pss;
     char* search_result;
