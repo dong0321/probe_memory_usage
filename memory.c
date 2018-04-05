@@ -33,8 +33,8 @@ int get_memory_usage_kb(struct mem_info *meminfo)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-       printf("Read proc/self/status error");
-       return -1;
+       //printf("Read proc/self/status error");
+       //return -1;
     }
     fclose(procfile);
 
@@ -159,7 +159,7 @@ void parent_info()
     FILE* pfile = fopen(pfilename, "r");
     if( !fread(prt_buffer, sizeof(char), prt_to_read, pfile))
     {
-        printf("Read /proc/parent/status/ error");
+        //printf("Read /proc/parent/status/ error");
     }
     fclose(pfile);
 
@@ -198,7 +198,7 @@ void smap_pss_rss(int pid)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-        printf("Read /proc/pid/smaps error");
+        //printf("Read /proc/pid/smaps error");
     }
     fclose(procfile);
     int Rss, Pss;

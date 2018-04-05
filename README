@@ -6,8 +6,10 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     $ mpicc check_memory.c memory.c -o check_memory
 
 #Usage
+#If want to use result_process.py must use level 1 output. Cause this script only deal with Pss value
+
     $ ./be_true -l 1
-    $ mpirun -np 4 ./check_memory -l level_value
+    $ mpirun -np 4 ./check_memory -l 1
 
     There are 3 level of information you can print,
     -l 1,2,3 allow to print different level of information from /proc/pid/status
@@ -16,28 +18,10 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     long VmSize;
     long VmRss;
     int Pss;
-
-    level 2 (important: ompi process only,  level 1 is included)
-    long VmPin;
-    long RssShmem;
-    long RssFile;
-    long RssAnon;
-
-    level 3 (extention: ompi process only, level 1 & 2 are included)
-    long VmData;
-    long VmStk;
-    long VmExe;
-    long VmLib;
-    long VmPTE;
-    long VmPMD;
-    long VmSwap;
-    char Cpus_allowed[256];
-    char Cpus_allowed_list[256];
-    char Mems_allowed[256];
-    char Mems_allowed_list[256];
+    #output infomation format is
+    Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss
 
 #processing test results
-If want to use result_process.py must use level 1 output. Cause this script only deal with Pss value
 Run result_process.py can process results, include statistis calculation of mean / std, also detect outier
 (1) Data saved in memory_info.csv by sbatch_slurm.sh
     Table columns are:
@@ -58,3 +42,22 @@ used by each process. If any processes share memory, this will overreport the am
 of memory actually used, because the same shared memory will be counted more than once,
 appearing again in each other process that shares the same memory. Thus it is an unreliable
 number, especially when high-memory processes have a lot of forks.
+
+    level 2 (important: ompi process only,  level 1 is included)
+    long VmPin;
+    long RssShmem;
+    long RssFile;
+    long RssAnon;
+
+    level 3 (extention: ompi process only, level 1 & 2 are included)
+    long VmData;
+    long VmStk;
+    long VmExe;
+    long VmLib;
+    long VmPTE;
+    long VmPMD;
+    long VmSwap;
+    char Cpus_allowed[256];
+    char Cpus_allowed_list[256];
+    char Mems_allowed[256];
+    char Mems_allowed_list[256];
