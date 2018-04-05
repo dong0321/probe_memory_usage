@@ -37,7 +37,8 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     char Mems_allowed_list[256];
 
 #processing test results
-Run process.py can process results, include statistis calculation of mean / std, also detect outier
+If want to use result_process.py must use level 1 output. Cause this script only deal with Pss value
+Run result_process.py can process results, include statistis calculation of mean / std, also detect outier
 (1) Data saved in memory_info.csv by sbatch_slurm.sh
     Table columns are:
     echo "Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss" >> memory_info.csv
