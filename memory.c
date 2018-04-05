@@ -33,7 +33,7 @@ int get_memory_usage_kb(struct mem_info *meminfo)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-       printf("read error");
+       printf("Read proc/self/status error");
        return -1;
     }
     fclose(procfile);
@@ -159,7 +159,7 @@ void parent_info()
     FILE* pfile = fopen(pfilename, "r");
     if( !fread(prt_buffer, sizeof(char), prt_to_read, pfile))
     {
-        printf("read error");
+        printf("Read /proc/parent/status/ error");
     }
     fclose(pfile);
 
@@ -198,7 +198,7 @@ void smap_pss_rss(int pid)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-        printf("read error");
+        printf("Read /proc/pid/smaps error");
     }
     fclose(procfile);
     int Rss, Pss;
@@ -241,8 +241,7 @@ void print_info(int aflag, int bflag, int cflag)
 {
     if(aflag)
     {
-        printf("    VmRSS(status): %6ld KB, VmSize: %6ld KB, Rss(smaps): %6d KB, Pss: %6d KB\n", meminfo.VmRss, meminfo.VmSize, RssSum, PssSum);
-        printf("    My_parent_id: %d, pVmRSS(status): %6ld KB, pVmSize: %6ld KB, pRss(smaps): %6d KB, pPss: %6d KB\n", Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
+        printf("%6d,  %6ld, %6ld, %6d, %6d, %6d, %6ld, %6ld, %6d, %6d", rank, meminfo.VmRss, meminfo.VmSize, RssSum, PssSum, Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
     }
 
     if(bflag)

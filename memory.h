@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <string.h>
 
+int rank;
+
 struct mem_info
 {
     long VmSize;

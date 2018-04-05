@@ -6,7 +6,7 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     $ mpicc check_memory.c memory.c -o check_memory
 
 #Usage
-    $ ./be_true -l 3
+    $ ./be_true -l 1
     $ mpirun -np 4 ./check_memory -l level_value
 
     There are 3 level of information you can print,
@@ -35,6 +35,14 @@ The info come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(Rss & 
     char Cpus_allowed_list[256];
     char Mems_allowed[256];
     char Mems_allowed_list[256];
+
+#processing test results
+Run process.py can process results, include statistis calculation of mean / std, also detect outier
+(1) Data saved in memory_info.csv by sbatch_slurm.sh
+    Table columns are:
+    echo "Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss" >> memory_info.csv
+(2)Also generate scatter/boxplot figures for mpi_process_pss, daemon_pss.
+
 # more info http://man7.org/linux/man-pages/man5/proc.5.html
 #           https://en.wikipedia.org/wiki/Proportional_set_size
 
