@@ -18,13 +18,13 @@ The infomation come from /proc/pid/status(VmRss VmSize, etc)  & /proc/pid/smaps(
         int mapwr;
 
         #output infomation format is
-        Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr
+        Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr,key
 
 #processing test results
 Run result_process.py can process results, include statistis calculation of mean / std, also detect outier
 (1) Data saved in memory_info.csv by sbatch_slurm.sh
     Table columns are:
-    echo "Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr" >> memory_info.csv
+    "Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr,key"
 
 (2)Also generate scatter/boxplot figures for mpi_process_pss, daemon_pss.
 

@@ -4,8 +4,21 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-#Rank, VmRSS(status), VmSize,  Rss(smaps), Pss, Ppid, pVmRSS(status), pVmSize,  pRss(smaps), pPss , mapwr, pmapwr
-data = pd.read_csv('memory_info.csv', sep=',')
+f = open("memory_info.csv","r")
+lines = f.readlines()
+f.close()
+f = open("selected.csv","w")
+
+#insert table title
+f.write("Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr,meminfo\n")
+
+#Select lines with key value MEM_info
+for line in lines:
+    if "MEM_info" in line:
+        f.write(line)
+f.close()
+
+data = pd.read_csv('selected.csv', sep=',')
 print data
 
 #mean/std of mpi process pss, mapwr

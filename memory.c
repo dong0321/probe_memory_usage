@@ -211,5 +211,5 @@ void maps_wr(int pid)
 
 void print_info()
 {
-    printf("%6d,  %6ld, %6ld, %6d, %6d, %6d, %6ld, %6ld, %6d, %6d, %6d, %6d\n", rank, meminfo.VmRss, meminfo.VmSize, RssSum, PssSum, Ppid, pVmRSS, pVmSize, pRssSum, pPssSum, mapwr, pmapwr);
+    printf("%6d,  %6ld, %6ld, %6d, %6d, %6d, %6ld, %6ld, %6d, %6d, %6d, %6d, MEM_info\n", rank, meminfo.VmRss, meminfo.VmSize, RssSum, PssSum, Ppid, pVmRSS, pVmSize, pRssSum, pPssSum, mapwr, pmapwr);
 }
