@@ -9,9 +9,11 @@
  *
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
 #include "memory.h"
 
 /* parent pid */
@@ -19,10 +21,9 @@ int ppid, Ppid;
 
 /* sum of RSS/PSS from /proc/pid/smaps */
 int RssSum, PssSum, pRssSum, pPssSum;
-
+int mapwr, pmapwr;
 /* parent Vmrss/vmsize */
 long pVmRSS, pVmSize;
-
 
 int get_memory_usage_kb(struct mem_info *meminfo)
 {
@@ -33,8 +34,8 @@ int get_memory_usage_kb(struct mem_info *meminfo)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-       //printf("Read proc/self/status error");
-       //return -1;
+       printf("Read proc/self/status error");
+       return -1;
     }
     fclose(procfile);
 
@@ -54,95 +55,19 @@ int get_memory_usage_kb(struct mem_info *meminfo)
         {
             sscanf(line, "%*s %ld", &meminfo->VmSize);
         }
-
-        search_result = strstr(line, "VmPin:");
+        search_result = strstr(line, "PPid:");
         if (search_result != NULL)
         {
-            sscanf(line, "%*s %ld", &meminfo->VmPin);
+            sscanf(line, "%*s %d", &ppid);
         }
-        search_result = strstr(line, "RssShmem:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->RssShmem);
-        }
-        search_result = strstr(line, "RssAnon:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->RssAnon);
-        }
-        search_result = strstr(line, "RssFile:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->RssFile);
-        }
-
-        search_result = strstr(line, "VmData:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmData);
-        }
-        search_result = strstr(line, "VmStk:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmStk);
-        }
-        search_result = strstr(line, "VmExe:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmExe);
-        }
-        search_result = strstr(line, "VmLib:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmLib);
-        }
-        search_result = strstr(line, "VmPTE:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmPTE);
-        }
-        search_result = strstr(line, "VmPMD:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmPMD);
-        }
-        search_result = strstr(line, "VmSwap:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %ld", &meminfo->VmSwap);
-        }
-        search_result = strstr(line, "Cpus_allowed:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %s", meminfo->Cpus_allowed);
-        }
-        search_result = strstr(line, "Cpus_allowed_list:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %s", meminfo->Cpus_allowed_list);
-        }
-        search_result = strstr(line, "Mems_allowed:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %s", meminfo->Mems_allowed);
-        }
-        search_result = strstr(line, "Mems_allowed_list:");
-        if (search_result != NULL)
-        {
-            sscanf(line, "%*s %s", meminfo->Mems_allowed_list);
-        }
-
-       search_result = strstr(line, "PPid:");
-       if (search_result != NULL)
-       {
-           sscanf(line, "%*s %d", &ppid);
-       }
-       line = strtok(NULL, delims);
+        line = strtok(NULL, delims);
     }
     smap_pss_rss(0);
     smap_pss_rss(ppid);
+    maps_wr(0);
+    maps_wr(ppid);
     parent_info();
-    return 1;
+    return 0;
 }
 
 void parent_info()
@@ -159,7 +84,7 @@ void parent_info()
     FILE* pfile = fopen(pfilename, "r");
     if( !fread(prt_buffer, sizeof(char), prt_to_read, pfile))
     {
-        //printf("Read /proc/parent/status/ error");
+        printf("Read /proc/parent/status/ error");
     }
     fclose(pfile);
 
@@ -198,7 +123,7 @@ void smap_pss_rss(int pid)
     char buffer[to_read];
     if( !fread(buffer, sizeof(char), to_read, procfile) )
     {
-        //printf("Read /proc/pid/smaps error");
+        printf("Read /proc/pid/smaps error");
     }
     fclose(procfile);
     int Rss, Pss;
@@ -237,25 +162,54 @@ void smap_pss_rss(int pid)
         line = strtok(NULL, delims);
     }
 }
-void print_info(int aflag, int bflag, int cflag)
+
+void maps_wr(int pid)
 {
-    if(aflag)
-    {
-        printf("%6d,  %6ld, %6ld, %6d, %6d, %6d, %6ld, %6ld, %6d, %6d", rank, meminfo.VmRss, meminfo.VmSize, RssSum, PssSum, Ppid, pVmRSS, pVmSize, pRssSum, pPssSum);
-    }
+    char pfilename[50];
+    FILE *procfile;
 
-    if(bflag)
+    /* if pid is 0 we want to get info of ourself, otherwise pPid for parent*/
+    if( pid==0 )
     {
-        printf("    VmPin: %6ld KB, RssAnon: %6ld KB, RssFile: %6ld KB, RssShmem: %6ld KB\n", meminfo.VmPin, meminfo.RssAnon, meminfo.RssFile, meminfo.RssShmem);
+        procfile = fopen("/proc/self/maps", "r");
     }
-
-    if(cflag)
+    else
     {
-        printf("    VmData: %6ld KB, VmStk: %6ld KB, VmExe: %6ld KB, VmLib: %6ld KB, VmPTE: %6ld KB, VmPMD: %6ld KB, VmSwap: %6ld KB\n",
-                meminfo.VmData, meminfo.VmStk, meminfo.VmExe, meminfo.VmLib, meminfo.VmPTE, meminfo.VmPMD, meminfo.VmSwap);
-
-        printf("    Cpus_allowed: %s, Cpus_allowed_list: %s, Mems_allowed: %s, Mems_allowed_list: %s\n",
-                meminfo.Cpus_allowed, meminfo.Cpus_allowed_list, meminfo.Mems_allowed, meminfo.Mems_allowed_list);
+        snprintf(pfilename, sizeof pfilename, "/proc/%d/maps", pid);
+        procfile = fopen(pfilename, "r");
     }
-    printf("\n");
+    char line[256];
+
+    char* search_result;
+    char* token;
+
+    char *start, *end;
+    long sum=0, temp=0;
+    /* get info line by line, only care line with rw-p, sub start addr - end addr */
+    while (fgets(line, sizeof(line), procfile))
+    {
+        search_result = strstr(line, "rw-p");
+        if (search_result != NULL)
+        {
+            token = strtok(line, " ");
+            start = strtok(token, "-");
+            token = strtok(NULL, "-");
+            temp = (strtol(token, &end,16) - strtol(start, *end,16))/1024;
+            sum = sum +temp;
+        }
+    }
+    if(pid==0)
+    {
+        mapwr = sum;
+    }
+    else
+    {
+        pmapwr =sum;
+    }
+    fclose(procfile);
+}
+
+void print_info()
+{
+    printf("%6d,  %6ld, %6ld, %6d, %6d, %6d, %6ld, %6ld, %6d, %6d, %6d, %6d\n", rank, meminfo.VmRss, meminfo.VmSize, RssSum, PssSum, Ppid, pVmRSS, pVmSize, pRssSum, pPssSum, mapwr, pmapwr);
 }

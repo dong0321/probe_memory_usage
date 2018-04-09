@@ -19,28 +19,23 @@ struct mem_info
 {
     long VmSize;
     long VmRss;
-
-    long VmPin;
-    long RssShmem;
-    long RssAnon;
-    long RssFile;
-
-    long VmData;
-    long VmStk;
-    long VmExe;
-    long VmLib;
-    long VmPTE;
-    long VmPMD;
-    long VmSwap;
-    char Cpus_allowed[256];
-    char Cpus_allowed_list[256];
-    char Mems_allowed[256];
-    char Mems_allowed_list[256];
 };
 
 struct mem_info meminfo;
 
+/*  Get memory usage information from /proc/pid/status */
 int get_memory_usage_kb(struct mem_info *meminfo);
-void print_info(int a, int b, int c);
+
+/*  Get daemon memory usage information from /proc/pid/status */
 void parent_info();
+
+/* Get memory usage information from /proc/pid/smaps (both mpi process and daemon) */
 void smap_pss_rss(int pid);
+
+/* Get memory usage information from /proc/pid/maps (both mpi process and daemon) */
+void maps_wr(int pid);
+
+/* print result
+ * Format: Rank,VmRSS(status),VmSize,Rss(smaps),Pss,Ppid,pVmRSS(status),pVmSize,pRss(smaps),pPss,mapwr,pmapwr
+ */
+void print_info();
