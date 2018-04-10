@@ -82,9 +82,16 @@ plt.plot(data["Rank"], data["mapwr"], 'rs')
 plt.savefig('Mpi_process_mapwr.pdf')
 
 plt.figure()
+data.boxplot(column=["mapwr"])
+plt.savefig('Mpi_process_mapwr_boxplot.pdf')
+
+plt.figure()
 plt.ylabel('Daemon memory w/r usage(KB)', fontsize=14, color='blue')
 plt.xlabel('Child Mpi Rank', fontsize=14, color='blue')
 #red dashes, blue squares
 plt.plot(data["Rank"],data["pmapwr"], 'rs')
 plt.savefig('Daemon_pmapwr.pdf')
 
+plt.figure()
+data.boxplot(column=["pmapwr"])
+plt.savefig('Daemon_pmapwr_boxplot.pdf')
